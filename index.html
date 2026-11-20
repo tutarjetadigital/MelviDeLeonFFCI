@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjeta Digital - Melvy de León | FFCI Guatemala</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            /* Paleta Institucional FFCI Guatemala (Azul Ejecutivo Profundo & Dorado Ámbar) */
+            --ffci-navy: #0B1F3A;
+            --ffci-blue: #163A6B;
+            --ffci-gold: #C8963E;
+            --ffci-gold-light: #E2B35A;
+            --ffci-dark-bg: #071324;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: var(--ffci-dark-bg);
+            background-image: 
+                radial-gradient(rgba(22, 58, 107, 0.28) 1.2px, transparent 1.2px),
+                radial-gradient(rgba(200, 150, 62, 0.16) 1.2px, transparent 1.2px);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+            color: #0f172a;
+        }
+
+        .serif-font {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Contenedor tipo Tarjeta Profesional Móvil */
+        .card-container {
+            width: 100%;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px rgba(200, 150, 62, 0.18);
+        }
+
+        @media (min-width: 480px) {
+            .card-container {
+                max-width: 450px;
+                margin: 2rem auto;
+                min-height: auto;
+                border-radius: 28px;
+                overflow: hidden;
+                border: 1px solid rgba(200, 150, 62, 0.38);
+            }
+        }
+
+        /* BANNER SUPERIOR INSTITUCIONAL FFCI */
+        .banner-container {
+            width: 100%;
+            height: 162px;
+            background: linear-gradient(135deg, #071324 0%, #0B1F3A 48%, #163A6B 100%);
+            position: relative;
+            border-bottom: 3px solid #C8963E;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 1.25rem 2.2rem 1.25rem;
+            text-align: center;
+        }
+
+        .banner-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+            background-image: radial-gradient(#E2B35A 1px, transparent 1px);
+            background-size: 16px 16px;
+            pointer-events: none;
+        }
+
+        /* Sección del contenido de la tarjeta */
+        .content-section {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            position: relative;
+            padding-bottom: 2.5rem;
+            flex-grow: 1;
+        }
+
+        /* Contenedor de la foto de perfil */
+        .profile-container {
+            position: relative;
+            width: 124px;
+            height: 124px;
+            margin: -54px auto 0 auto;
+            z-index: 10;
+        }
+
+        .profile-pic {
+            width: 100%;
+            height: 100%;
+            border-radius: 9999px;
+            border: 3.5px solid #C8963E;
+            box-shadow: 0 12px 28px rgba(11, 31, 58, 0.35), 0 0 0 4px #ffffff;
+            background: linear-gradient(135deg, #0B1F3A 0%, #163A6B 100%);
+            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        /* Tarjeta interactiva de enlace */
+        .info-card {
+            border-radius: 14px;
+            padding: 0.95rem 1.1rem;
+            transition: all 0.25s ease;
+        }
+        .info-card:hover {
+            box-shadow: 0 8px 22px rgba(11, 31, 58, 0.22);
+            transform: translateY(-1.5px);
+        }
+
+        /* Notificación Toast */
+        .toast-notification {
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .toast-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-0 sm:p-4">
+
+    <div class="card-container">
+        
+        <!-- Franja institucional superior con colores FFCI -->
+        <div class="h-1.5 w-full" style="background: linear-gradient(90deg, #0B1F3A 0%, #C8963E 50%, #163A6B 100%);"></div>
+
+        <!-- BARRA INSTITUCIONAL Y COMPARTIR -->
+        <div class="px-4 py-2.5 flex items-center justify-between border-b" style="background-color: #071324; border-color: #163A6B;">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-award text-xs" style="color: #E2B35A;"></i>
+                <span class="text-[11px] font-extrabold text-white tracking-widest uppercase serif-font">FFCI Guatemala</span>
+            </div>
+            <button type="button" id="share-btn" onclick="shareCard()" class="text-slate-200 hover:text-amber-300 active:scale-95 px-2.5 py-1.5 rounded-lg transition-all text-xs flex items-center gap-1.5 font-semibold cursor-pointer relative z-20" title="Compartir Tarjeta">
+                <i class="fas fa-share-alt"></i>
+                <span class="text-[10px]">Compartir</span>
+            </button>
+        </div>
+
+        <!-- BANNER SUPERIOR -->
+        <div class="banner-container">
+            <div class="banner-pattern"></div>
+            <span class="text-[10px] font-bold uppercase tracking-[0.25em] mb-1 z-10" style="color: #E2B35A;">
+                Institución Formativa
+            </span>
+            <h2 class="text-sm sm:text-base font-extrabold text-white tracking-wide uppercase serif-font max-w-xs leading-snug z-10">
+                Fraternidad de Formadores con Carácter Integral
+            </h2>
+        </div>
+
+        <!-- CONTENIDO PRINCIPAL DE LA TARJETA -->
+        <div class="content-section">
+            <div class="flex flex-col items-center px-5 text-center">
+                <!-- Foto de Perfil Oficial -->
+                <div class="profile-container">
+                    <img src="https://i.postimg.cc/KjXx7DzS/Captura-de-pantalla-2026-11-20-094025.png" 
+                         alt="Melvy de León - Directora Regional FFCI" 
+                         class="profile-pic object-top"
+                         onerror="this.onerror=null; this.src='https://placehold.co/300x300/0B1F3A/E2B35A?text=ML';" />
+                </div>
+
+                <!-- Nombre Principal y Cargo -->
+                <div class="mt-4 flex flex-col items-center justify-center">
+                    <h1 class="text-2xl font-black tracking-tight serif-font" style="color: #0B1F3A;">Melvy de León</h1>
+                    
+                    <div class="inline-flex items-center mt-2 px-4 py-1.5 rounded-full border shadow-sm" style="background-color: #f0f4f8; border-color: #C8963E;">
+                        <span class="text-xs font-extrabold uppercase tracking-wider" style="color: #0B1F3A;">
+                            Directora Regional
+                        </span>
+                    </div>
+
+                    <p class="mt-2.5 text-xs font-bold max-w-xs leading-relaxed" style="color: #163A6B;">
+                        FFCI — Fraternidad de Formadores con Carácter Integral
+                    </p>
+
+                    <!-- Pilares / Distintivos -->
+                    <div class="mt-3.5 flex flex-wrap justify-center gap-1.5 max-w-xs">
+                        <span class="text-[10px] font-bold bg-white border border-slate-200 px-3 py-1 rounded-md shadow-sm" style="color: #0B1F3A;">
+                            <i class="fas fa-compass mr-1" style="color: #163A6B;"></i>Liderazgo
+                        </span>
+                        <span class="text-[10px] font-bold bg-white border border-slate-200 px-3 py-1 rounded-md shadow-sm" style="color: #0B1F3A;">
+                            <i class="fas fa-graduation-cap mr-1" style="color: #C8963E;"></i>Formación
+                        </span>
+                        <span class="text-[10px] font-bold bg-white border border-slate-200 px-3 py-1 rounded-md shadow-sm" style="color: #0B1F3A;">
+                            <i class="fas fa-shield-alt mr-1" style="color: #163A6B;"></i>Carácter Integral
+                        </span>
+                    </div>
+                </div>
+
+                <!-- MISIÓN Y VISIÓN INSTITUCIONAL -->
+                <div class="w-full mt-5 space-y-3 text-left">
+                    
+                    <!-- Misión -->
+                    <div class="bg-white border border-slate-200/90 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1" style="background-color: #163A6B;"></div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <div class="w-6 h-6 rounded-md flex items-center justify-center text-white text-xs" style="background-color: #0B1F3A;">
+                                <i class="fas fa-bullseye" style="color: #E2B35A;"></i>
+                            </div>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider serif-font" style="color: #0B1F3A;">
+                                Misión
+                            </h3>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Guiar a propietarios de negocios, líderes y ejecutivos guatemaltecos en la aplicación de principios bíblicos que transformen su vida personal y empresarial.
+                        </p>
+                    </div>
+
+                    <!-- Visión -->
+                    <div class="bg-white border border-slate-200/90 rounded-xl p-4 shadow-sm relative overflow-hidden">
+                        <div class="absolute left-0 top-0 bottom-0 w-1" style="background-color: #C8963E;"></div>
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <div class="w-6 h-6 rounded-md flex items-center justify-center text-white text-xs" style="background-color: #163A6B;">
+                                <i class="fas fa-eye" style="color: #E2B35A;"></i>
+                            </div>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider serif-font" style="color: #0B1F3A;">
+                                Visión
+                            </h3>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Ser influenciadores de líderes profesionales y empresarios guatemaltecos, sembrando principios bíblicos que trasciendan a la siguiente generación a nivel mundial.
+                        </p>
+                    </div>
+
+                </div>
+
+                <!-- SECCIÓN DE ENLACES, CONTACTO DIRECTO Y AGENDA -->
+                <div class="w-full mt-6 space-y-2.5 text-left">
+                    <div class="flex items-center justify-between px-1 pb-1 border-b border-slate-200">
+                        <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Contacto y Recursos</span>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded border" style="background-color: #f0f4f8; color: #0B1F3A; border-color: #cbd5e1;">FFCI Oficial</span>
+                    </div>
+
+                    <!-- CONTACTO DIRECTO: TELÉFONO Y WHATSAPP -->
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Teléfono Directo -->
+                        <a href="tel:+50241514114"
+                           class="info-card flex items-center gap-2.5 bg-white hover:bg-slate-50 cursor-pointer group shadow-sm p-3 border"
+                           style="border-color: #163A6B;">
+                            <div class="p-2 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
+                                 style="background-color: #0B1F3A; color: #E2B35A;">
+                                <i class="fas fa-phone-alt text-xs"></i>
+                            </div>
+                            <div class="min-w-0 flex-grow">
+                                <span class="block text-[9px] font-extrabold uppercase tracking-wider" style="color: #163A6B;">
+                                    Teléfono
+                                </span>
+                                <span class="block text-[11px] font-extrabold truncate" style="color: #0B1F3A;">
+                                    502-4151-4114
+                                </span>
+                            </div>
+                        </a>
+
+                        <!-- WhatsApp Directo -->
+                        <a href="https://wa.me/50259749230" target="_blank" rel="noopener noreferrer"
+                           class="info-card flex items-center gap-2.5 bg-white hover:bg-slate-50 cursor-pointer group shadow-sm p-3 border"
+                           style="border-color: #C8963E;">
+                            <div class="p-2 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
+                                 style="background-color: #163A6B; color: #E2B35A;">
+                                <i class="fab fa-whatsapp text-sm"></i>
+                            </div>
+                            <div class="min-w-0 flex-grow">
+                                <span class="block text-[9px] font-extrabold uppercase tracking-wider" style="color: #9a6e21;">
+                                    WhatsApp
+                                </span>
+                                <span class="block text-[11px] font-extrabold truncate" style="color: #0B1F3A;">
+                                    502-5974-9230
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- BOTÓN DIRECTO A AGENDA DE CITAS -->
+                    <a href="https://www.ffci-guatemala.org/agenda" target="_blank" rel="noopener noreferrer"
+                       class="info-card w-full p-4 flex items-center gap-3.5 cursor-pointer group text-left shadow-md border"
+                       style="background: linear-gradient(135deg, #0B1F3A 0%, #163A6B 100%); border-color: #C8963E;">
+                        <div class="p-2.5 rounded-xl flex-shrink-0 group-hover:scale-105 transition-transform shadow-sm border"
+                             style="background-color: #C8963E; border-color: #E2B35A; color: #0B1F3A;">
+                            <i class="fas fa-calendar-check text-sm"></i>
+                        </div>
+                        <div class="min-w-0 flex-grow">
+                            <span class="block text-xs font-extrabold text-white tracking-wide">
+                                Agenda una cita
+                            </span>
+                            <span class="block text-[10px] font-medium leading-snug mt-0.5" style="color: #E2B35A;">
+                                Agenda una sesión gratuita de 30 minutos
+                            </span>
+                        </div>
+                        <i class="fas fa-external-link-alt text-xs group-hover:translate-x-0.5 transition-all" style="color: #E2B35A;"></i>
+                    </a>
+
+                    <!-- BOTÓN SITIO WEB OFICIAL FFCI GUATEMALA -->
+                    <a href="https://www.ffci-guatemala.org/" target="_blank" rel="noopener noreferrer" 
+                       class="info-card w-full flex items-center gap-3.5 bg-white hover:bg-slate-50 cursor-pointer group shadow-sm border"
+                       style="border-color: #163A6B;">
+                        <div class="p-2.5 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
+                             style="background-color: #0B1F3A; color: #E2B35A;">
+                            <i class="fas fa-globe text-sm"></i>
+                        </div>
+                        <div class="min-w-0 flex-grow">
+                            <span class="block text-[9px] font-extrabold uppercase tracking-wider" style="color: #163A6B;">
+                                Sitio Web Oficial
+                            </span>
+                            <span class="block text-xs font-extrabold transition-colors truncate" style="color: #0B1F3A;">
+                                www.ffci-guatemala.org
+                            </span>
+                        </div>
+                        <i class="fas fa-external-link-alt text-xs group-hover:translate-x-0.5 transition-all" style="color: #C8963E;"></i>
+                    </a>
+
+                    <!-- BOTÓN SERVICIOS FFCI GUATEMALA -->
+                    <a href="https://www.ffci-guatemala.org/servicios" target="_blank" rel="noopener noreferrer" 
+                       class="info-card w-full flex items-center gap-3.5 bg-white hover:bg-slate-50 cursor-pointer group shadow-sm border"
+                       style="border-color: #163A6B;">
+                        <div class="p-2.5 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
+                             style="background-color: #163A6B; color: #E2B35A;">
+                            <i class="fas fa-handshake text-sm"></i>
+                        </div>
+                        <div class="min-w-0 flex-grow">
+                            <span class="block text-[9px] font-extrabold uppercase tracking-wider" style="color: #163A6B;">
+                                Portafolio Institucional
+                            </span>
+                            <span class="block text-xs font-extrabold group-hover:opacity-90 transition-opacity truncate" style="color: #0B1F3A;">
+                                Nuestros Servicios FFCI
+                            </span>
+                        </div>
+                        <i class="fas fa-external-link-alt text-xs group-hover:translate-x-0.5 transition-all" style="color: #C8963E;"></i>
+                    </a>
+                </div>
+
+                <!-- REDES SOCIALES OFICIALES (PALETA COHERENTE FFCI) -->
+                <div class="w-full mt-6 space-y-2.5 text-left">
+                    <div class="flex items-center justify-between px-1 pb-1 border-b border-slate-200">
+                        <span class="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest">Redes Sociales</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <!-- Facebook FFCI Guatemala -->
+                        <a href="https://www.facebook.com/ffciguatemala" target="_blank" rel="noopener noreferrer" 
+                           class="info-card flex items-center gap-2.5 bg-white hover:bg-slate-50 cursor-pointer group shadow-sm p-3 border"
+                           style="border-color: rgba(22, 58, 107, 0.35);">
+                            <div class="p-2 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
+                                 style="background-color: #0B1F3A; color: #E2B35A;">
+                                <i class="fab fa-facebook-f text-xs"></i>
+                            </div>
+                            <div class="min-w-0 flex-grow">
+                                <span class="block text-[9px] font-extrabold uppercase tracking-wider" style="color: #163A6B;">
+                                    Facebook
+                                </span>
+                                <span class="block text-[11px] font-extrabold truncate" style="color: #0B1F3A;">
+                                    @ffciguatemala
+                                </span>
+                            </div>
+                        </a>
+
+                        <!-- Instagram FFCI Guatemala -->
+                        <a href="https://www.instagram.com/ffciguate/" target="_blank" rel="noopener noreferrer" 
+                           class="info-card flex items-center gap-2.5 bg-white hover:bg-slate-50 cursor-pointer group shadow-sm p-3 border"
+                           style="border-color: rgba(200, 150, 62, 0.55);">
+                            <div class="p-2 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm"
+                                 style="background-color: #163A6B; color: #E2B35A;">
+                                <i class="fab fa-instagram text-xs"></i>
+                            </div>
+                            <div class="min-w-0 flex-grow">
+                                <span class="block text-[9px] font-extrabold uppercase tracking-wider" style="color: #9a6e21;">
+                                    Instagram
+                                </span>
+                                <span class="block text-[11px] font-extrabold truncate" style="color: #0B1F3A;">
+                                    @ffciguate
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center py-4 px-4 text-[11px] font-medium border-t text-slate-300" style="background-color: #071324; border-color: #163A6B;">
+            <p class="flex items-center justify-center gap-1.5">
+                <i class="fas fa-award text-xs" style="color: #E2B35A;"></i>
+                <span class="font-bold text-white serif-font">FFCI Guatemala</span> 
+            </p>
+            <p class="text-[10px] text-slate-400 mt-0.5">Fraternidad de Formadores con Carácter Integral</p>
+            <p class="text-[10px] text-slate-500 mt-1">© Todos los derechos reservados.</p>
+        </div>
+    </div>
+
+    <!-- Toast de Notificación -->
+    <div id="toast" class="toast-notification fixed bottom-5 left-1/2 -translate-x-1/2 text-white font-bold px-5 py-2.5 rounded-full text-xs shadow-2xl z-50 flex items-center gap-2 border" style="background-color: #0B1F3A; border-color: #C8963E;">
+        <i class="fas fa-check-circle" style="color: #E2B35A;"></i>
+        <span id="toast-message">Copiado al portapapeles</span>
+    </div>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        async function shareCard() {
+            const shareUrl = (window.location.href && window.location.href.startsWith('http')) 
+                ? window.location.href 
+                : 'https://www.ffci-guatemala.org/';
+
+            const shareData = {
+                title: 'Melvy de León - Directora Regional | FFCI Guatemala',
+                text: 'Melvy de León - Directora Regional de FFCI (Fraternidad de Formadores con Carácter Integral)',
+                url: shareUrl
+            };
+
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                    return;
+                } catch (err) {
+                    // Si el usuario cancela explícitamente, no mostramos error
+                    if (err && err.name === 'AbortError') return;
+                }
+            }
+
+            // Respaldo confiable al portapapeles para navegadores de escritorio o iframes
+            copyToClipboard(shareUrl, "Enlace de la tarjeta copiado al portapapeles");
+        }
+
+        function copyToClipboard(text, customMessage) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            textArea.setAttribute("readonly", "");
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast(customMessage || "Copiado al portapapeles");
+                } else {
+                    showToast("Enlace: " + text);
+                }
+            } catch (err) {
+                showToast("Enlace: " + text);
+            }
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
